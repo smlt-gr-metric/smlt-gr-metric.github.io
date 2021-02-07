@@ -103,7 +103,6 @@ select {
     fill: currentColor;
     transition: transform 0.1s;
   }
-}
 
 #gui {
     position: absolute;
