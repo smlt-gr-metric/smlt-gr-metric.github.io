@@ -11,20 +11,135 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.1.0/math.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
 
-    <!--Local JS-->
-    <script type="text/javascript" src="js/index.js"></script>
-    <script type="text/javascript" src="js/utils.js"></script>
-
     <!--Local CSS-->
     <link rel="stylesheet" href="main.css">
 </head>
 
-<body>
+<body scroll='no'>
     <!--Div which holds the Output -->
     <div id="output">
     </div>
 
+    <div class="form" id="form">
 
+        <div class="title">Set up your space</div>
+        <div class="subtitle">Metric components (symetric)</div>
+            <div class="input-container-metric ic2">
+                <input id="00" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">00</label>
+            </div>
+        <div class="main-row">
+            <div class="input-container-metric ic2">
+                <input id="10" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">10</label>
+            </div>
+            <div class="input-container-metric ic2">
+                <input id="11" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">11</label>
+            </div>
+        </div>
+        <div class="main-row">
+            <div class="input-container-metric ic2">
+                <input id="20" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">20</label>
+            </div>
+            <div class="input-container-metric ic2">
+                <input id="21" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">21</label>
+            </div>
+            <div class="input-container-metric ic2">
+                <input id="22" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">22</label>
+            </div>
+        </div><div class="main-row">
+            <div class="input-container-metric ic2">
+                <input id="30" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">30</label>
+            </div>
+            <div class="input-container-metric ic2">
+                <input id="31" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">31</label>
+            </div>
+            <div class="input-container-metric ic2">
+                <input id="32" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">32</label>
+            </div>
+            <div class="input-container-metric ic2">
+                <input id="33" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">33</label>
+            </div>
+        </div>
 
+        <div class="subtitle">Names of the coordinates</div>
+        <div class="main-row">
+            <div class="input-container ic2">
+                <input id="t" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">t</label>
+            </div>
+            <div class="input-container ic2">
+                <input id="x1" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">x<sub>1</sub></label>
+            </div>
+            <div class="input-container ic2">
+                <input id="x2" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">x<sub>2</sub></label>
+            </div>
+            <div class="input-container ic2">
+                <input id="x3" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">x<sub>3</sub></label>
+            </div>
+        </div>
+
+        <div class="subtitle">Translation to Cartesian</div>
+            <div class="input-container ic2">
+                <input id="ct" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">t</label>
+            </div>
+            <div class="input-container ic2">
+                <input id="cx1" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">x<sub>1</sub></label>
+            </div>
+            <div class="input-container ic2">
+                <input id="cx2" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">x<sub>2</sub></label>
+            </div>
+            <div class="input-container ic2">
+                <input id="cx3" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">x<sub>3</sub></label>
+            </div>
+
+            <div class="subtitle">Examples</div>
+        <div class="select">
+            <select name="format" id="Selection">
+                <option selected disabled>None</option>
+                <option value="1">Flat space</option>
+                <option value="2">Schwarzschild</option>
+            </select>
+        </div>
+              
+        <button type="text" class="submit" id="ready">Ready</button>
+    </div>
+
+    <!--Local JS-->
+    <script type="text/javascript" src="index.js"></script>
 </body>
+
 </html>
