@@ -18,12 +18,15 @@
 <body scroll='no'>
     <!--Div which holds the Output -->
     <div id="output">
+    <div id="inset">
+
+    </div>
     </div>
 
     <div class="form" id="form">
 
-        <div class="title">Set up your space</div>
-        <div class="subtitle">Metric components (symetric)</div>
+        <div class="formtitle">Set up your space</div>
+        <div class="formsubtitle">Metric components (symetric)</div>
             <div class="input-container-metric ic2">
                 <input id="00" class="input" type="text" placeholder=" " />
                 <div class="cut"></div>
@@ -80,7 +83,7 @@
             </div>
         </div>
 
-        <div class="subtitle">Names of the coordinates</div>
+        <div class="formsubtitle">Names of the coordinates</div>
         <div class="main-row">
             <div class="input-container ic2">
                 <input id="t" class="input" type="text" placeholder=" " />
@@ -104,7 +107,7 @@
             </div>
         </div>
 
-        <div class="subtitle">Translation to Cartesian</div>
+        <div class="formsubtitle">Translation to Cartesian for coordinates</div>
             <div class="input-container ic2">
                 <input id="ct" class="input" type="text" placeholder=" " />
                 <div class="cut"></div>
@@ -113,12 +116,12 @@
             <div class="input-container ic2">
                 <input id="cx1" class="input" type="text" placeholder=" " />
                 <div class="cut"></div>
-                <label class="placeholder">x<sub>1</sub></label>
+                <label class="placeholder">x</label>
             </div>
             <div class="input-container ic2">
                 <input id="cx2" class="input" type="text" placeholder=" " />
                 <div class="cut"></div>
-                <label class="placeholder">x<sub>2</sub></label>
+                <label class="placeholder">y</label>
             </div>
             <div class="input-container ic2">
                 <input id="cx3" class="input" type="text" placeholder=" " />
@@ -126,12 +129,20 @@
                 <label class="placeholder">x<sub>3</sub></label>
             </div>
 
-            <div class="subtitle">Examples</div>
+            <div class="formsubtitle">Constants used in formulas (one symbol for each)</div>
+            <div class="input-container ic2">
+                <input id="constants" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label class="placeholder">cRG..</label>
+            </div>
+
+            <div class="formsubtitle">Examples</div>
         <div class="select">
             <select name="format" id="Selection">
                 <option selected disabled>None</option>
                 <option value="1">Flat space</option>
                 <option value="2">Schwarzschild</option>
+                <option value="3">Schwarzschild Cartesian</option>
             </select>
         </div>
               

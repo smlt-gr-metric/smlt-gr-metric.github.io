@@ -14,7 +14,11 @@ var inputEx = [
     ]],
     [[
         document.getElementById("ct"), document.getElementById("cx1"), document.getElementById("cx2"), document.getElementById("cx3")
+    ]],
+    [[
+        document.getElementById("constants")
     ]]
+
 ]
 
 var exampleFlatSpace = [
@@ -29,32 +33,78 @@ var exampleFlatSpace = [
     ]],
     [[
         't', 'x', 'y', 'z'
+    ]],
+    [[
+        ''
     ]]
 ]
 var exampleSchwarzschild = [
     [
-        ['-(1-R/(x^2+y^2+z^2)^0.5)^2/(1+R/(x^2+y^2+z^2)^0.5)^2', '0', '0', '0'],
-        ['0', '(1+R/(x^2+y^2+z^2)^0.5)^4', '0', '0'],
-        ['0', '0', '(1+R/(x^2+y^2+z^2)^0.5)^4', '0'],
-        ['0', '0', '0', '(1+R/(x^2+y^2+z^2)^0.5)^4']
+        ['-(1-S/r)', '0', '0', '0'],
+        ['0', '1/(1-S/r)', '0', '0'],
+        ['0', '0', '(r^2)', '0'],
+        ['0', '0', '0', 'r^2 * sin(a)^2']
+    ],
+    [[
+        't', 'r', 'a', 'b',
+    ]],
+    [[
+        't',
+        'r*sin(a)*cos(b)',
+        'r*sin(a)*sin(b)',
+        'r*cos(a)'
+    ]],
+    [[
+        'S'
+    ]]
+]
+/**
+ * 
+    [[
+        'T',
+        'cos(a)sin(b)X+sin(a)sin(b)Y+cos(b)Z',
+        '-sin(a)X/r+cos(a)Y/r',
+        'cos(a)cos(b)X/r+sin(a)cos(b)Y/r-sin(b)Z/r'
+    ]],
+ */
+var exampleSchwarzschildCartesian = [
+    [
+        ['-(1-S/(x^2+y^2+z^2)^0.5)^2/(1+S/(x^2+y^2+z^2)^0.5)^2', '0', '0', '0'],
+        ['0', '(1+S/(x^2+y^2+z^2)^0.5)^4', '0', '0'],
+        ['0', '0', '(1+S/(x^2+y^2+z^2)^0.5)^4', '0'],
+        ['0', '0', '0', '(1+S/(x^2+y^2+z^2)^0.5)^4']
     ],
     [[
         't', 'x', 'y', 'z',
     ]],
     [[
-        't', 'x', 'y', 'z'
+        't',
+        'x',
+        'y',
+        'z'
+    ]],
+    [[
+        'S'
     ]]
 ]
 
+
 //ordered name of coordinates that are used in the metric tensor
-var coordinatesNames = 'txyz';
+var coordinatesNames = ['t', 'r', 'a', 'b'];
 var metric = [
     ['-1', '0', '0', '0'],
     ['0', '1', '0', '0'],
     ['0', '0', '1', '0'],
     ['0', '0', '0', '1']
 ]
-
+var transformation = [
+    't',
+    'r*sin(a)*cos(b)',
+    'r*sin(a)*sin(b)',
+    'r*cos(a)'
+]
+var variables = {};
+var constants = '';
 examplesSelection.onchange = function OnChange() {
     var value = this.value
     if (value == '1') {
@@ -74,24 +124,39 @@ examplesSelection.onchange = function OnChange() {
                 }
             }
         }
+    } else if (value == '3') {
+        for (var e = 0; e < inputEx.length; e++) {
+            for (var i = 0; i < inputEx[e].length; i++) {
+                for (var j = 0; j < inputEx[e][i].length; j++) {
+                    inputEx[e][i][j].value = exampleSchwarzschildCartesian[e][i][j];
+                }
+            }
+        }
     }
 }
 output.style.display = 'none';
 
-document.getElementById('ready').onclick = ()=>{
+document.getElementById('ready').onclick = () => {
     output.style.display = 'inline-block';
-    document.body.style.overflow='hidden';
+    document.body.style.overflow = 'hidden';
     for (var i = 0; i < inputEx[0].length; i++) {
-            for (var j = 0; j < inputEx[0][i].length; j++) {
-                metric[i][j] = inputEx[0][i][j].value;
-            }
+        for (var j = 0; j < inputEx[0][i].length; j++) {
+            metric[i][j] = inputEx[0][i][j].value;
         }
-        for (var i = 0; i < inputEx[1][0].length; i++) {
-        coordinatesNames[i]=inputEx[1][0][i].value;
-        }
-        
-    document.getElementById('form').style.display= 'none';
-start()
+    }
+    for (var i = 0; i < inputEx[1][0].length; i++) {
+        coordinatesNames[i] = inputEx[1][0][i].value;
+    }
+    for (var i = 0; i < inputEx[2][0].length; i++) {
+        transformation[i] = inputEx[2][0][i].value;
+    }
+    for (var i = 0; i < inputEx[3][0][0].value.length; i++) {
+        variables[inputEx[3][0][0].value[i]] = 1;
+    }
+
+    document.getElementById('form').style.display = 'none';
+
+    start()
 }
 
 function start() {
@@ -99,13 +164,17 @@ function start() {
     const WIDTH = window.innerWidth;
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(WIDTH, HEIGHT);
+    renderer.setClearColor(0x00010a, 1);
     document.body.appendChild(renderer.domElement);
 
     var scene = new THREE.Scene();
 
     //defining camera
-    var camera = new THREE.PerspectiveCamera(100, WIDTH / HEIGHT, 0.1, 1000);
+    var camera = new THREE.PerspectiveCamera(100, WIDTH / HEIGHT, 0.001, 10000);
+    camera.position.x = 100;
+    camera.position.y = 100;
     camera.position.z = 100;
+    
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.rotateSpeed = 1.0;
     controls.zoomSpeed = 1.2;
@@ -114,6 +183,43 @@ function start() {
     controls.enablePan = true;
     controls.enableDamping = true;
     controls.DampingFactor = 0.0;
+
+    window.addEventListener('resize', onWindowResize);
+    function onWindowResize() {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+    }
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        scene.add(sphere);
+    
+
+
+    var CANVAS_WIDTH = 180,
+        CANVAS_HEIGHT = 180,
+        CAM_DISTANCE = 300;
+    // dom
+    container2 = document.getElementById('inset');
+    // renderer
+    renderer2 = new THREE.WebGLRenderer();
+    renderer2.setClearColor(0x00010a, 1);
+    renderer2.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
+    container2.appendChild(renderer2.domElement);
+
+    // scene
+    scene2 = new THREE.Scene();
+
+    // camera
+    camera2 = new THREE.PerspectiveCamera(50, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
+    camera2.up = camera.up; // important!
+
+    // axes
+    axes2 = new THREE.AxesHelper(100);
+    scene2.add(axes2);
+
 
     //light to see objects
     const generalLight = new THREE.AmbientLight(0xffffff)
@@ -141,20 +247,25 @@ function start() {
     }
     starter = gui.add(options, 'start_stop');
     starter.name("start");
+    var consts = gui.addFolder("Constants");
+    constantsNames = Object.keys(variables);
+    for (var i = 0; i < constantsNames.length; i++) {
+        consts.add(variables, constantsNames[i]).name(constantsNames[i])
+    }
     var adding = gui.addFolder("Add");
     var infoToAdd = {
         colort: "#ffeb00",
-        t: 1,
-        x1: -100,
-        x2: 47,
-        x3: 0,
-        velt: 1,
-        velx1: 100,
+        t: 0,
+        x1: 30,
+        x2: 0.001,
+        x3: 0.001,
+        velt: 100,
+        velx1: 50,
         velx2: 0,
         velx3: 0,
     }
     //create one default object
-    addObject()
+    //addObject()
     //menu adding
     adding.add(infoToAdd, 't').name("t")
     adding.add(infoToAdd, 'x1').name("X1")
@@ -172,7 +283,8 @@ function start() {
             vel: [infoToAdd.velt, infoToAdd.velx1, infoToAdd.velx2, infoToAdd.velx3],
             pre_vel: [], points: [], line: 0,
             color: infoToAdd.colort,
-            data: gui.addFolder("" + geodesis.length)
+            data: gui.addFolder("" + geodesis.length),
+            crashN: -1
         })
         time_c = geodesis[geodesis.length - 1].data.add(geodesis[geodesis.length - 1].cd, "0").name("t")
         time_c.listen()
@@ -190,157 +302,178 @@ function start() {
         v2.listen()
         v3 = geodesis[geodesis.length - 1].data.add(geodesis[geodesis.length - 1].vel, "3").name("Velocity X3")
         v3.listen()
+        colort = geodesis[geodesis.length - 1].data.addColor(geodesis[geodesis.length - 1], 'color').name("Color")
     }
 
     //global variables
-    const dt = 0.01;//the smallest amount of time
+    const dt = 0.001;//the smallest amount of time
     var time = 0.000;//what time since the start
-
-    var variables = {
-        R: 15,
-    }
     //number of dimensions
     const dn = metric.length;
     var Christoffel = generateChristoffel(metric, invertMatrix(metric));
-
     function render() {
         requestAnimationFrame(render);
         if (start) {
-            geodesis = changeState(variables);
+            geodesis = changeState(geodesis, variables);
 
             //updating path
             for (var count = 0; count < geodesis.length; count++) {
-                cartesian = toCartesian(geodesis[count].cd);
-                geodesis[count].points.push(new THREE.Vector3(cartesian[1], cartesian[2], cartesian[3]));
-                if (geodesis[count].line != 0)
-                    scene.remove(geodesis[count].line);
-                material = new THREE.LineBasicMaterial({ color: new THREE.Color(geodesis[count].color) });
-                geometry = new THREE.BufferGeometry().setFromPoints(geodesis[count].points);
+                cartesian = []
+                scope = variables
+                for (var cd_name = 0; cd_name < coordinatesNames.length; cd_name++) {
+                    scope[coordinatesNames[cd_name]] = geodesis[count].cd[cd_name]
+                    if (!scope[coordinatesNames[cd_name]])
+                        scope[coordinatesNames[cd_name]]+= 0.000000000001
+                }
+                    for (var i = 0; i < transformation.length; i++)
+                        cartesian.push(math.evaluate(transformation[i], scope))
+                    if (geodesis[count].points.length > 0) {
+                        if ((cartesian[1] != NaN && cartesian[2] != NaN && cartesian[3] != NaN) && (Math.pow((geodesis[count].points[geodesis[count].points.length - 1].x - cartesian[1]), 2) + Math.pow((geodesis[count].points[geodesis[count].points.length - 1].y - cartesian[2]), 2) + Math.pow((geodesis[count].points[geodesis[count].points.length - 1].z - cartesian[3]), 2) < 4000))
+                            geodesis[count].points.push(new THREE.Vector3(cartesian[1], cartesian[2], cartesian[3]));
+                    } else {
+                        geodesis[count].points.push(new THREE.Vector3(cartesian[1], cartesian[2], cartesian[3]));
+                    }
+                    if (geodesis[count].line != 0)
+                        scene.remove(geodesis[count].line);
+                    material = new THREE.LineBasicMaterial({ color: new THREE.Color(geodesis[count].color) });
+                    geometry = new THREE.BufferGeometry().setFromPoints(geodesis[count].points);
+                    geodesis[count].line = new THREE.Line(geometry, material);
+                    scene.add(geodesis[count].line);
+                }
+            }
 
-                geodesis[count].line = new THREE.Line(geometry, material);
-                scene.add(geodesis[count].line);
+            camera2.position.copy(camera.position);
+            camera2.position.sub(controls.target);
+            camera2.position.setLength(CAM_DISTANCE);
+
+            camera2.lookAt(scene2.position);
+
+            renderer.render(scene, camera);
+            renderer2.render(scene2, camera2);
+        }
+        render();
+        //translation to cartesian
+        function toCartesian(x) {
+            return x;
+        }
+
+
+
+
+
+
+
+
+
+
+        //updating objects
+        function changeState(geodesis, parameters) {
+            for (var count = 0; count < geodesis.length; count++) {
+                geodesis[count].pre_vel = geodesis[count].vel
+                for (var nu = 0; nu < dn; nu++) {
+                    dvel = 0
+                    for (var i = 0; i < dn; i++) {
+                        for (var j = 0; j < dn; j++) {
+                            scope = parameters
+                            for (var cd_name = 0; cd_name < coordinatesNames.length; cd_name++) {
+                                scope[coordinatesNames[cd_name]] = geodesis[count].cd[cd_name]
+                                if (!scope[coordinatesNames[cd_name]])
+                                    scope[coordinatesNames[cd_name]] += 0.000000000001
+                            }
+                            dvel += math.evaluate(Christoffel[nu][i][j], scope) * geodesis[count].pre_vel[i] * geodesis[count].pre_vel[j] * dt
+                        }
+                    }
+                    geodesis[count].vel[nu] -= dvel;
+                }
+                //Euler method to calculate motion
+                for (var nu = 0; nu < dn; nu++) {
+                    geodesis[count].cd[nu] += (geodesis[count].vel[nu] + geodesis[count].pre_vel[nu]) / 2 * dt
+
+                }
+                return geodesis;
+                /*
+                [
+                    {
+                        cd: [t, x1, x2, x3],
+                        vel: [t, x1, ..],
+                        pre_vel: [],
+                    }
+                ]
+                */
             }
         }
-        renderer.render(scene, camera);
-    }
-    render();
-    //translation to cartesian
-    function toCartesian(x) {
-        return x;
-    }
 
 
-
-
-
-
-
-
-
-
-    //updating objects
-    function changeState(parameters) {
-        for (var count = 0; count < geodesis.length; count++) {
-            geodesis[count].pre_vel = geodesis[count].vel
+        //generating christoffel symbols
+        function generateChristoffel(g, g_inv) {
+            var L = math.zeros(dn, dn, dn)._data
             for (var nu = 0; nu < dn; nu++) {
                 for (var i = 0; i < dn; i++) {
                     for (var j = 0; j < dn; j++) {
-                        scope = parameters
-                        for (var cd_name = 0; cd_name < coordinatesNames.length; cd_name++)
-                            scope[coordinatesNames[cd_name]] = geodesis[count].cd[cd_name]
-                        geodesis[count].vel[nu] -= math.evaluate(Christoffel[nu][i][j], scope) * geodesis[count].pre_vel[i] * geodesis[count].pre_vel[j] * dt
-                    }
-                }
-            }
-            //Euler method to calculate motion
-            for (var nu = 0; nu < dn; nu++) {
-                geodesis[count].cd[nu] += (geodesis[count].vel[nu] + geodesis[count].pre_vel[nu]) / 2 * dt
-            }
-            return geodesis;
-            /*
-            [
-                {
-                    cd: [t, x1, x2, x3],
-                    vel: [t, x1, ..],
-                    pre_vel: [],
-                }
-            ]
-            */
-        }
-    }
 
-
-    //generating christoffel symbols
-    function generateChristoffel(g, g_inv) {
-        var L = math.zeros(dn, dn, dn)._data
-        for (var nu = 0; nu < dn; nu++) {
-            for (var i = 0; i < dn; i++) {
-                for (var j = 0; j < dn; j++) {
-
-                    for (var m = 0; m < dn; m++) {
-                        console.log(coordinatesNames)
-                        sum_der = math.string(math.derivative(g[j][m], coordinatesNames[i])) + "+" + math.string(math.derivative(g[m][i], coordinatesNames[j])) + "-" + math.string(math.derivative(g[i][j], coordinatesNames[m]))
-                        L[nu][i][j] += "+(1/2*" + g_inv[nu][m] + "*(" + sum_der + "))";
-                    }
-
-                    L[nu][i][j] = math.string(math.simplify(L[nu][i][j]))
-                }
-            }
-        }
-        return L;
-    }
-
-    //inverting matrix
-    function invertMatrix(M) {
-        if (M.length !== M[0].length) { return; }
-        var i = 0, ii = 0, j = 0, dim = M.length, e = 0, t = 0;
-        var I = [], C = [];
-        for (i = 0; i < dim; i += 1) {
-            I[I.length] = [];
-            C[C.length] = [];
-            for (j = 0; j < dim; j += 1) {
-                if (i == j) { I[i][j] = "1"; }
-                else { I[i][j] = "0"; }
-                C[i][j] = M[i][j];
-            }
-        }
-        for (i = 0; i < dim; i += 1) {
-            e = C[i][i];
-            if (e == 0) {
-                for (ii = i + 1; ii < dim; ii += 1) {
-                    if (C[ii][i] != 0) {
-                        for (j = 0; j < dim; j++) {
-                            e = C[i][j];
-                            C[i][j] = C[ii][j];
-                            C[ii][j] = e;
-                            e = I[i][j];
-                            I[i][j] = I[ii][j];
-                            I[ii][j] = e;
+                        for (var m = 0; m < dn; m++) {
+                            sum_der = math.string(math.derivative(g[j][m], coordinatesNames[i])) + "+" + math.string(math.derivative(g[m][i], coordinatesNames[j])) + "-" + math.string(math.derivative(g[i][j], coordinatesNames[m]))
+                            L[nu][i][j] += "+(1/2*(" + g_inv[nu][m] + ")*(" + sum_der + "))";
                         }
-                        break;
+
+                        L[nu][i][j] = math.string(math.simplify(L[nu][i][j]))
                     }
                 }
-                e = C[i][i];
-                if (e == 0) { return }
             }
-            for (j = 0; j < dim; j++) {
-                C[i][j] = "" + C[i][j] + "/" + "(" + e + ")";
-                I[i][j] = "" + I[i][j] + "/" + "(" + e + ")";
-            }
-            for (ii = 0; ii < dim; ii++) {
-                if (ii == i) { continue; }
-                e = C[ii][i];
-                for (j = 0; j < dim; j++) {
-                    C[ii][j] = "(" + C[ii][j] + "-(" + e + ")*" + C[i][j] + ")";
-                    I[ii][j] = "(" + I[ii][j] + "-(" + e + ")*" + I[i][j] + ")";
+            return L;
+        }
+
+        //inverting matrix
+        function invertMatrix(M) {
+            if (M.length !== M[0].length) { return; }
+            var i = 0, ii = 0, j = 0, dim = M.length, e = 0, t = 0;
+            var I = [], C = [];
+            for (i = 0; i < dim; i += 1) {
+                I[I.length] = [];
+                C[C.length] = [];
+                for (j = 0; j < dim; j += 1) {
+                    if (i == j) { I[i][j] = "1"; }
+                    else { I[i][j] = "0"; }
+                    C[i][j] = M[i][j];
                 }
             }
-        }
-        for (var i = 0; i < dim; i++) {
-            for (var j = 0; j < dim; j++) {
-                I[i][j] = math.string(math.simplify(I[i][j]))
+            for (i = 0; i < dim; i += 1) {
+                e = C[i][i];
+                if (e == 0) {
+                    for (ii = i + 1; ii < dim; ii += 1) {
+                        if (C[ii][i] != 0) {
+                            for (j = 0; j < dim; j++) {
+                                e = C[i][j];
+                                C[i][j] = C[ii][j];
+                                C[ii][j] = e;
+                                e = I[i][j];
+                                I[i][j] = I[ii][j];
+                                I[ii][j] = e;
+                            }
+                            break;
+                        }
+                    }
+                    e = C[i][i];
+                    if (e == 0) { return }
+                }
+                for (j = 0; j < dim; j++) {
+                    C[i][j] = "" + C[i][j] + "/" + "(" + e + ")";
+                    I[i][j] = "" + I[i][j] + "/" + "(" + e + ")";
+                }
+                for (ii = 0; ii < dim; ii++) {
+                    if (ii == i) { continue; }
+                    e = C[ii][i];
+                    for (j = 0; j < dim; j++) {
+                        C[ii][j] = "(" + C[ii][j] + "-(" + e + ")*" + C[i][j] + ")";
+                        I[ii][j] = "(" + I[ii][j] + "-(" + e + ")*" + I[i][j] + ")";
+                    }
+                }
             }
+            for (var i = 0; i < dim; i++) {
+                for (var j = 0; j < dim; j++) {
+                    I[i][j] = math.string(math.simplify(I[i][j]))
+                }
+            }
+            return I;
         }
-        return I;
     }
-}

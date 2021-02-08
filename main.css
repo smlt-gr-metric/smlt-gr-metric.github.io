@@ -29,6 +29,22 @@ body::-webkit-scrollbar-thumb
 											  transparent)
 }
 
+#inset  {
+    width: 200px;
+    height: 200px;
+    background-color: #00010a; /* or transparent; will show through only if renderer alpha: true */
+    border: 1px solid white;
+    border-radius: 12px;
+    margin: 20px;
+    padding-top:5px;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    z-index: 100;
+}
+
 select {
     -webkit-appearance:none;
     -moz-appearance:none;
@@ -126,7 +142,7 @@ select {
     transform: translate(-50%);
   }
   
-  .title {
+  .formtitle {
     color: #eee;
     font-family: sans-serif;
     font-size: 36px;
@@ -134,7 +150,7 @@ select {
     margin-top: 30px;
   }
   
-  .subtitle {
+  .formsubtitle {
     color: #eee;
     font-family: sans-serif;
     font-size: 16px;
@@ -241,5 +257,5 @@ select {
   }
   
   .submit:active {
-    background-color:rgb(204, 212, 255);
+    background-color: #dc2f55;
   }
