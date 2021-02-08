@@ -255,14 +255,14 @@ function start() {
     var adding = gui.addFolder("Add");
     var infoToAdd = {
         colort: "#ffeb00",
-        t: 0,
-        x1: 30,
-        x2: 0.001,
-        x3: 0.001,
-        velt: 100,
-        velx1: 50,
-        velx2: 0,
-        velx3: 0,
+        t: 0.0,
+        x1: 0.0,
+        x2: 0.0,
+        x3: 0.0,
+        velt: 1,
+        velx1: 0.0,
+        velx2: 0.0,
+        velx3: 0.0,
     }
     //create one default object
     //addObject()
