@@ -17,9 +17,12 @@ var inputEx = [
     ]],
     [[
         document.getElementById("constants")
-    ]]
-
+    ]],
+    [
+        [document.getElementById("1sphx"), document.getElementById("1sphy"), document.getElementById("1sphz"), document.getElementById("1sphR"), document.getElementById("1sphColor")]
+    ]
 ]
+var defaultObjects=[];
 
 var exampleFlatSpace = [
     [
@@ -36,7 +39,10 @@ var exampleFlatSpace = [
     ]],
     [[
         ''
-    ]]
+    ]],
+    [
+        ['0','0','0','0', "#000000"]
+    ]
 ]
 var exampleSchwarzschild = [
     [
@@ -56,17 +62,12 @@ var exampleSchwarzschild = [
     ]],
     [[
         'S'
-    ]]
-]
-/**
- * 
-    [[
-        'T',
-        'cos(a)sin(b)X+sin(a)sin(b)Y+cos(b)Z',
-        '-sin(a)X/r+cos(a)Y/r',
-        'cos(a)cos(b)X/r+sin(a)cos(b)Y/r-sin(b)Z/r'
     ]],
- */
+    [
+        ['0','0','0','10', "#000000"]
+    ]
+]
+
 var exampleSchwarzschildCartesian = [
     [
         ['-(1-S/(x^2+y^2+z^2)^0.5)^2/(1+S/(x^2+y^2+z^2)^0.5)^2', '0', '0', '0'],
@@ -85,7 +86,10 @@ var exampleSchwarzschildCartesian = [
     ]],
     [[
         'S'
-    ]]
+    ]],
+    [
+        ['0','0','0','10', "#000000"]
+    ]
 ]
 
 
@@ -151,7 +155,11 @@ document.getElementById('ready').onclick = () => {
         transformation[i] = inputEx[2][0][i].value;
     }
     for (var i = 0; i < inputEx[3][0][0].value.length; i++) {
-        variables[inputEx[3][0][0].value[i]] = 1;
+        variables[inputEx[3][0][0].value[i]] = 10;
+    }
+    for (var i = 0; i < inputEx[4].length; i++) {
+        defaultObjects.push(new THREE.Mesh( new THREE.SphereGeometry( parseFloat(inputEx[4][i][3].value), 32, 32 ), new THREE.MeshBasicMaterial( {color: new THREE.Color(inputEx[4][i][4].value)} )))
+        defaultObjects[i].position.set(parseFloat(inputEx[4][i][0].value), parseFloat(inputEx[4][i][1].value), parseFloat(inputEx[4][i][2].value))
     }
 
     document.getElementById('form').style.display = 'none';
@@ -225,6 +233,10 @@ function start() {
     const generalLight = new THREE.AmbientLight(0xffffff)
     scene.add(generalLight);
 
+    for(var i=0; i<defaultObjects.length;i++){
+        scene.add(defaultObjects[i])
+    }
+
     //geodesis
     var geodesis = []
 
@@ -254,7 +266,6 @@ function start() {
     }
     var adding = gui.addFolder("Add");
     var infoToAdd = {
-        colort: "#ffeb00",
         t: 0.0,
         x1: 0.0,
         x2: 0.0,
@@ -263,6 +274,8 @@ function start() {
         velx1: 0.0,
         velx2: 0.0,
         velx3: 0.0,
+        colort: "#ffeb00",
+        radius: 1
     }
     //create one default object
     //addObject()
@@ -276,7 +289,10 @@ function start() {
     adding.add(infoToAdd, 'velx2').name("Velocity X2")
     adding.add(infoToAdd, 'velx3').name("Velocity X3")
     adding.addColor(infoToAdd, 'colort').name("Color")
+    adding.add(infoToAdd, 'radius').name("Particle's Radius")
     adding.add([addObject], 0).name("add")
+    
+
     function addObject() {
         geodesis.push({
             cd: [infoToAdd.t, infoToAdd.x1, infoToAdd.x2, infoToAdd.x3],
@@ -284,6 +300,8 @@ function start() {
             pre_vel: [], points: [], line: 0,
             color: infoToAdd.colort,
             data: gui.addFolder("" + geodesis.length),
+            radius: infoToAdd.radius,
+            sphere: new THREE.Mesh( new THREE.SphereGeometry( infoToAdd.radius, 32, 32 ), new THREE.MeshBasicMaterial( {color: new THREE.Color(infoToAdd.colort)} )),
             crashN: -1
         })
         time_c = geodesis[geodesis.length - 1].data.add(geodesis[geodesis.length - 1].cd, "0").name("t")
@@ -307,13 +325,18 @@ function start() {
 
     //global variables
     const dt = 0.001;//the smallest amount of time
-    var time = 0.000;//what time since the start
+    var time = 0.000;//what time is from the start
     //number of dimensions
     const dn = metric.length;
     var Christoffel = generateChristoffel(metric, invertMatrix(metric));
     function render() {
         requestAnimationFrame(render);
         if (start) {
+            if(geodesis.length==0){
+                options.start_stop();
+                alert("Enter at least one test-particle");
+
+            }else{
             geodesis = changeState(geodesis, variables);
 
             //updating path
@@ -328,10 +351,13 @@ function start() {
                     for (var i = 0; i < transformation.length; i++)
                         cartesian.push(math.evaluate(transformation[i], scope))
                     if (geodesis[count].points.length > 0) {
-                        if ((cartesian[1] != NaN && cartesian[2] != NaN && cartesian[3] != NaN) && (Math.pow((geodesis[count].points[geodesis[count].points.length - 1].x - cartesian[1]), 2) + Math.pow((geodesis[count].points[geodesis[count].points.length - 1].y - cartesian[2]), 2) + Math.pow((geodesis[count].points[geodesis[count].points.length - 1].z - cartesian[3]), 2) < 4000))
+                        if ((cartesian[1] != NaN && cartesian[2] != NaN && cartesian[3] != NaN) && (Math.pow((geodesis[count].points[geodesis[count].points.length - 1].x - cartesian[1]), 2) + Math.pow((geodesis[count].points[geodesis[count].points.length - 1].y - cartesian[2]), 2) + Math.pow((geodesis[count].points[geodesis[count].points.length - 1].z - cartesian[3]), 2) < 4000)){
                             geodesis[count].points.push(new THREE.Vector3(cartesian[1], cartesian[2], cartesian[3]));
+                            geodesis[count].sphere.position.set(cartesian[1], cartesian[2], cartesian[3])
+                        }
                     } else {
                         geodesis[count].points.push(new THREE.Vector3(cartesian[1], cartesian[2], cartesian[3]));
+                        scene.add(geodesis[count].sphere)
                     }
                     if (geodesis[count].line != 0)
                         scene.remove(geodesis[count].line);
@@ -351,6 +377,7 @@ function start() {
             renderer.render(scene, camera);
             renderer2.render(scene2, camera2);
         }
+    }
         render();
         //translation to cartesian
         function toCartesian(x) {
