@@ -109,8 +109,8 @@ var transformation = [
 ]
 var variables = {};
 var constants = '';
-examplesSelection.onchange = function OnChange() {
-    var value = this.value
+
+function OnChange(value=this.value) {
     if (value == '1') {
         for (var e = 0; e < inputEx.length; e++) {
             for (var i = 0; i < inputEx[e].length; i++) {
@@ -138,6 +138,11 @@ examplesSelection.onchange = function OnChange() {
         }
     }
 }
+examplesSelection.value='3';
+OnChange('3');
+examplesSelection.onchange = OnChange;
+
+
 output.style.display = 'none';
 
 document.getElementById('ready').onclick = () => {
@@ -255,16 +260,34 @@ function start() {
             }
             start = !start;
         },
-
+        add_random: function () {
+            num=parseFloat(prompt("The amount of particles", "5"));
+            for(var i=0; i<num; i++){
+                addObject({
+                    t: 0.0,
+        x1: 70*(Math.random()*2-1),
+        x2: 70*(Math.random()*2-1),
+        x3: 70*(Math.random()*2-1),
+        velt: 1,
+        velx1: 100*(Math.random()*2-1),
+        velx2: 100*(Math.random()*2-1),
+        velx3: 100*(Math.random()*2-1),
+        colort: "#ffeb00",
+        radius: parseInt(Math.random()*2)
+                })
+            }
+        }
     }
     starter = gui.add(options, 'start_stop');
     starter.name("start");
+    gui.add(options, 'add_random').name("Add Random Particles");
     var consts = gui.addFolder("Constants");
     constantsNames = Object.keys(variables);
     for (var i = 0; i < constantsNames.length; i++) {
         consts.add(variables, constantsNames[i]).name(constantsNames[i])
     }
-    var adding = gui.addFolder("Add");
+    var adding = gui.addFolder("Add Particle");
+    var particlesList=gui.addFolder("List of Particles");
     var infoToAdd = {
         t: 0.0,
         x1: 0.0,
@@ -293,15 +316,15 @@ function start() {
     adding.add([addObject], 0).name("add")
     
 
-    function addObject() {
+    function addObject(source=infoToAdd) {
         geodesis.push({
-            cd: [infoToAdd.t, infoToAdd.x1, infoToAdd.x2, infoToAdd.x3],
-            vel: [infoToAdd.velt, infoToAdd.velx1, infoToAdd.velx2, infoToAdd.velx3],
+            cd: [source.t, source.x1, source.x2, source.x3],
+            vel: [source.velt, source.velx1, source.velx2, source.velx3],
             pre_vel: [], points: [], line: 0,
-            color: infoToAdd.colort,
-            data: gui.addFolder("" + geodesis.length),
-            radius: infoToAdd.radius,
-            sphere: new THREE.Mesh( new THREE.SphereGeometry( infoToAdd.radius, 32, 32 ), new THREE.MeshBasicMaterial( {color: new THREE.Color(infoToAdd.colort)} )),
+            color: source.colort,
+            data: particlesList.addFolder("" + geodesis.length),
+            radius: source.radius,
+            sphere: new THREE.Mesh( new THREE.SphereGeometry( source.radius, 32, 32 ), new THREE.MeshBasicMaterial( {color: new THREE.Color(source.colort)} )),
             crashN: -1
         })
         time_c = geodesis[geodesis.length - 1].data.add(geodesis[geodesis.length - 1].cd, "0").name("t")
@@ -408,18 +431,9 @@ function start() {
                 for (var nu = 0; nu < dn; nu++) {
                     geodesis[count].cd[nu] += (geodesis[count].vel[nu] + geodesis[count].pre_vel[nu]) / 2 * dt
 
-                }
+                }}
                 return geodesis;
-                /*
-                [
-                    {
-                        cd: [t, x1, x2, x3],
-                        vel: [t, x1, ..],
-                        pre_vel: [],
-                    }
-                ]
-                */
-            }
+                
         }
 
 
