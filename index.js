@@ -2,7 +2,7 @@ var inputForm = document.getElementById('form');
 var output = document.getElementById('output');
 var examplesSelection = document.getElementById("Selection");
 var loadingBar = document.getElementById("loading_bar");
-loadingBar.style.display="none";
+//loadingBar.style.display="none";
 
 var inputEx = [
     [
@@ -175,7 +175,7 @@ document.getElementById('ready').onclick = () => {
     document.getElementById('form').style.display = 'none';
 
     start()
-}, 1000)
+}, 1)
 }
 
 
