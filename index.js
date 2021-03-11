@@ -41,7 +41,7 @@ var exampleFlatSpace = [
         ''
     ]],
     [
-        ['0','0','0','0', "#000000"]
+        ['0','0','0','0', "#111111"]
     ]
 ]
 var exampleSchwarzschild = [
@@ -64,7 +64,7 @@ var exampleSchwarzschild = [
         'S'
     ]],
     [
-        ['0','0','0','10', "#000000"]
+        ['0','0','0','10', "#111111"]
     ]
 ]
 
@@ -88,7 +88,7 @@ var exampleSchwarzschildCartesian = [
         'S'
     ]],
     [
-        ['0','0','0','10', "#000000"]
+        ['0','0','0','10', "#111111"]
     ]
 ]
 
@@ -368,26 +368,18 @@ function start() {
                 }
             }
 
-            camera2.position.copy(camera.position);
-            camera2.position.sub(controls.target);
-            camera2.position.setLength(CAM_DISTANCE);
-
-            camera2.lookAt(scene2.position);
-
-            renderer.render(scene, camera);
-            renderer2.render(scene2, camera2);
         }
+        
+        camera2.position.copy(camera.position);
+        camera2.position.sub(controls.target);
+        camera2.position.setLength(CAM_DISTANCE);
+
+        camera2.lookAt(scene2.position);
+
+        renderer.render(scene, camera);
+        renderer2.render(scene2, camera2);
     }
         render();
-        //translation to cartesian
-        function toCartesian(x) {
-            return x;
-        }
-
-
-
-
-
 
 
 
