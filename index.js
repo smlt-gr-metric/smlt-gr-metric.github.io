@@ -175,8 +175,9 @@ document.getElementById('ready').onclick = () => {
     document.getElementById('form').style.display = 'none';
 
     start()
-}, 100)
+}, 1000)
 }
+
 
 function start() {
     const HEIGHT = window.innerHeight;
