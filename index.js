@@ -175,7 +175,7 @@ document.getElementById('ready').onclick = () => {
     document.getElementById('form').style.display = 'none';
 
     start()
-}, 1)
+}, 100)
 }
 
 function start() {

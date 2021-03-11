@@ -66,6 +66,7 @@ body::-webkit-scrollbar-thumb
       transform: rotateZ(360deg);
    }
 }
+
 #inset  {
     width: 200px;
     height: 200px;
