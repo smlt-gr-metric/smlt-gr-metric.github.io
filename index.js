@@ -150,6 +150,7 @@ output.style.display = 'none';
 document.getElementById('ready').onclick = () => {
     loadingBar.style.display = 'inline-block';
 
+    
     setTimeout(()=>{
     output.style.display = 'inline-block';
     document.body.style.overflow = 'hidden';
