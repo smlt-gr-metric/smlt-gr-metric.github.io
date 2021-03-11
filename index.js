@@ -268,10 +268,10 @@ function start() {
         x1: 70*(Math.random()*2-1),
         x2: 70*(Math.random()*2-1),
         x3: 70*(Math.random()*2-1),
-        velt: 1,
-        velx1: 100*(Math.random()*2-1),
-        velx2: 100*(Math.random()*2-1),
-        velx3: 100*(Math.random()*2-1),
+        velt: 2,
+        velx1: 200*(Math.random()*2-1),
+        velx2: 200*(Math.random()*2-1),
+        velx3: 200*(Math.random()*2-1),
         colort: "#ffeb00",
         radius: parseInt(Math.random()*2)
                 })
