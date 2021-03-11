@@ -1,6 +1,8 @@
 var inputForm = document.getElementById('form');
 var output = document.getElementById('output');
 var examplesSelection = document.getElementById("Selection");
+var loadingBar = document.getElementById("loading_bar");
+loadingBar.style.display="none";
 
 var inputEx = [
     [
@@ -146,6 +148,9 @@ examplesSelection.onchange = OnChange;
 output.style.display = 'none';
 
 document.getElementById('ready').onclick = () => {
+    loadingBar.style.display = 'inline-block';
+
+    setTimeout(()=>{
     output.style.display = 'inline-block';
     document.body.style.overflow = 'hidden';
     for (var i = 0; i < inputEx[0].length; i++) {
@@ -170,6 +175,7 @@ document.getElementById('ready').onclick = () => {
     document.getElementById('form').style.display = 'none';
 
     start()
+}, 1)
 }
 
 function start() {
@@ -352,6 +358,7 @@ function start() {
     //number of dimensions
     const dn = metric.length;
     var Christoffel = generateChristoffel(metric, invertMatrix(metric));
+    loadingBar.style.display='none';
     function render() {
         requestAnimationFrame(render);
         if (start) {

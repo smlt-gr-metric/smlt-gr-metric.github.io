@@ -29,7 +29,43 @@ body::-webkit-scrollbar-thumb
 											  transparent 75%,
 											  transparent)
 }
-
+.loading-circle,
+.rotating-circle-container {
+   width: 200px;
+   height: 200px;
+   z-index: 1000;
+}
+.loading-circle {
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   overflow: hidden;
+   margin: -100px 0 0 -100px;
+   box-shadow: inset 0 0 0 24px #dc2f55;
+   border-radius: 50%;
+}
+.rotating-circle-container {
+   transform: rotateZ(0deg);
+   animation: rotate 3s linear infinite;
+}
+.rotating-circle {
+   position: absolute;
+   top: 0;
+   left: 50%;
+   width: 24px;
+   height: 24px;
+   margin-left: -12px;
+   border-radius: 50%;
+   background-color: #fff;
+}
+@keyframes rotate {
+   from {
+      transform: rotateZ(0deg);
+   }
+   to {
+      transform: rotateZ(360deg);
+   }
+}
 #inset  {
     width: 200px;
     height: 200px;
@@ -158,7 +194,7 @@ select {
     font-weight: 600;
     margin-top: 20px;
   }
-  
+
   .formsubtitlecenter{
     color: #eee;
     font-family: sans-serif;
